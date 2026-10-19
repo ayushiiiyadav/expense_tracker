@@ -11,22 +11,26 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-const createTaskSchema = z.object({
-  title: z.string().trim().min(1, "Title is required").max(80, "Title is too long"),
-});
+const transactionFields = {
+  type: z.enum(["income", "expense"]),
+  amount: z.coerce.number().positive("Amount must be greater than 0"),
+  category: z.string().trim().min(1, "Category is required").max(30),
+  note: z.string().trim().max(100).optional(),
+  date: z.coerce.date().optional(),
+};
 
-const updateTaskSchema = z
-  .object({
-    title: z.string().trim().min(1).max(80).optional(),
-    status: z.enum(["pending", "in-progress", "completed"]).optional(),
-  })
-  .refine((data) => data.title !== undefined || data.status !== undefined, {
-    message: "Provide a title or a status to update",
+const createTransactionSchema = z.object(transactionFields);
+
+const updateTransactionSchema = z
+  .object(transactionFields)
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update",
   });
 
 module.exports = {
   registerSchema,
   loginSchema,
-  createTaskSchema,
-  updateTaskSchema,
-}; 
+  createTransactionSchema,
+  updateTransactionSchema,
+};
