@@ -14,7 +14,13 @@ import {
 } from "recharts";
 import api from "../api.js";
 
-const COLORS = ["#e64980", "#f783ac", "#b197fc", "#74c0fc", "#63e6be", "#ffd43b", "#ffa94d", "#a9e34b"];
+const COLORS = ["#6c8cff", "#4fc3b0", "#9b8cff", "#5cb8ff", "#e5a05f", "#e5707e", "#7fd18b", "#b8c4e0"];
+const tooltipStyle = {
+  background: "#0f1b36",
+  border: "1px solid rgba(148,170,220,0.2)",
+  borderRadius: 10,
+  color: "#e6ecfb",
+};
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const money = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
@@ -84,7 +90,6 @@ export default function Dashboard() {
           <div className="value balance">{money(monthly?.balance)}</div>
         </div>
       </div>
-
       <div className="charts">
         <div className="card chart-card">
           <h3>Spending by category</h3>
@@ -94,13 +99,25 @@ export default function Dashboard() {
             <div className="chart-box">
               <ResponsiveContainer>
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={90}>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={92}
+                    innerRadius={52}
+                    paddingAngle={3}
+                    stroke="none"
+                  >
                     {pieData.map((_, i) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v) => money(v)} />
-                  <Legend />
+                  <Tooltip
+                    formatter={(v) => money(v)}
+                    contentStyle={tooltipStyle}
+                    itemStyle={{ color: "#e6ecfb" }}
+                  />
+                  <Legend wrapperStyle={{ color: "#b8c4e0" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -112,13 +129,18 @@ export default function Dashboard() {
           <div className="chart-box">
             <ResponsiveContainer>
               <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip formatter={(v) => money(v)} />
-                <Legend />
-                <Bar dataKey="Income" fill="#2f9e8f" />
-                <Bar dataKey="Expense" fill="#e64980" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                <XAxis dataKey="name" stroke="#8da0c8" />
+                <YAxis stroke="#8da0c8" />
+                <Tooltip
+                  formatter={(v) => money(v)}
+                  contentStyle={tooltipStyle}
+                  cursor={{ fill: "rgba(255,255,255,0.05)" }}
+                  itemStyle={{ color: "#e6ecfb" }}
+                />
+                <Legend wrapperStyle={{ color: "#b8c4e0" }} />
+                <Bar dataKey="Income" fill="#4fc3b0" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="Expense" fill="#e5707e" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
